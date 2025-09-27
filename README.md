@@ -1,166 +1,147 @@
 # jarvis
 Personal Assistant for the AI &amp; Robotics Club
+# AI Intent-Based Browser Agent
 
-AI Intent-Based Browser Agent
+An end-to-end system that **automatically performs web tasks** based on **user intent classification**. The system combines **NLP-based intent classification** with an **AI-driven browser agent**, enabling hands-free automation of tasks like searching, clicking, filling forms, and extracting data.
 
-An end-to-end system that automatically performs tasks on the web based on user intent classification. The system combines NLP-based intent classification with an AI-driven browser agent, allowing users to execute complex web tasks without manual input.
+---
 
-Table of Contents
+## Table of Contents
+- [Overview](#overview)
+- [Features](#features)
+- [Architecture](#architecture)
+- [Technologies Used](#technologies-used)
+- [Setup & Installation](#setup--installation)
+- [Usage](#usage)
+- [Example Workflow](#example-workflow)
+- [Contributing](#contributing)
+- [License](#license)
 
-Overview
+---
 
-Features
-
-Architecture
-
-Technologies Used
-
-Setup & Installation
-
-Usage
-
-Example Workflow
-
-Contributing
-
-License
-
-Overview
+## Overview
 
 This project integrates two main components:
 
-Intent Classification:
+1. **Intent Classification**
+   - Understands the user's goal from natural language input.
+   - Produces structured output (JSON) containing `intent` and `entities`.
 
-Identifies the user's goal from natural language input.
+2. **AI Browser Agent**
+   - Maps intents to browser actions automatically.
+   - Executes tasks on the web without manual intervention.
 
-Output: structured JSON containing intent and entities.
+This combination allows **automated execution of complex web tasks** triggered by natural language commands.
 
-AI Browser Agent:
+---
 
-Automatically maps intents to browser actions.
+## Features
 
-Performs tasks like searching, clicking, typing, and extracting data without manual intervention.
+- Accepts natural language commands
+- Automatic intent classification
+- Entity extraction for parameterized actions
+- Browser automation using Playwright or Selenium
+- Supports multi-step task execution
+- Modular architecture for easy extension
+- Optional feedback or result extraction
 
-This combination allows hands-free automation of web tasks triggered by natural language commands.
+---
 
-Features
-
-Natural language input support
-
-Automatic intent classification
-
-Entity extraction for parameterized actions
-
-Browser automation using Playwright or Selenium
-
-Multi-step task execution
-
-Modular architecture (easy to extend with new intents)
-
-Optional feedback or result extraction
-
-Architecture
+## Architecture
+```
 User Input (Natural Language)
-            ↓
+↓
 Intent Classifier (NLP Model)
-            ↓
+↓
 Intent + Entities (JSON)
-            ↓
+↓
 Action Planner / Task Mapper
-            ↓
+↓
 AI Browser Agent (Playwright / Selenium)
-            ↓
-Task Execution / Result
+↓
+Task Execution / Feedback
+```
 
-Technologies Used
+## Setup & Installation
 
-Python 3.10+
-
-Playwright – browser automation
-
-OpenAI GPT-5-mini API – intent classification & entity extraction (optional)
-
-JSON – structured data exchange
-
-Optional: HuggingFace Transformers for local intent classification
-
-Setup & Installation
-
-Clone the repository:
-
+1. **Clone the repository**
+```bash
 git clone https://github.com/username/intent-agent.git
 cd intent-agent
+```
 
-
-Install dependencies:
-
+Install dependencies
+```
 pip install -r requirements.txt
+```
 
-
-Install Playwright browsers:
-
+Install Playwright browsers
+```
 playwright install
+```
 
-
-Set API keys (if using GPT API) in .env:
-
+Set API keys (if using GPT API) in .env file:
+```
 OPENAI_API_KEY=your_api_key_here
-
+```
 Usage
-
 Run the agent with a sample intent JSON:
 
+```
 python run_agent.py
+```
 
+Sample intent JSON input
 
-Provide sample input (for testing):
-
+```
 {
   "intent": "add_to_cart",
   "entities": {"product": "milk"}
 }
-
-
+```
 Agent automatically performs the task in the browser.
 
+```
 Example Workflow
-
-User Input: "Add milk to my shopping cart"
+User Input:
+"Add milk to my shopping cart"
+```
 
 Intent Classifier Output:
-
+```
 {
   "intent": "add_to_cart",
   "entities": {"product": "milk"}
 }
-
+```
 
 Action Planner Maps Intent → Actions:
-
+```
 [
   {"action": "open_page", "url": "https://www.example.com/shop"},
   {"action": "search", "product": "milk"},
   {"action": "click", "selector": ".add-to-cart-btn"}
 ]
+```
 
+- AI Browser Agent Executes Actions Automatically
 
-AI Browser Agent Executes Actions Automatically
+- Task Completed / Feedback Provided
 
-Task Completed / Feedback Provided
-
-Contributing
-
+- Contributing
+```
 Fork the repository
 
-Create a new branch: git checkout -b feature/intent-agent
+Create a new branch: git checkout -b feature/your-feature
 
 Commit changes: git commit -m "Add new feature"
 
-Push branch: git push origin feature/intent-agent
+Push branch: git push origin feature/your-feature
 
 Open a Pull Request
+```
 
 License
+This project is licensed under the MIT License – see the LICENSE file for details.
 
-This project is licensed under the MIT License – see the LICENSE
- file for details.
+
