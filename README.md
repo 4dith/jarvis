@@ -1,4 +1,4 @@
-# jarvis
+# jarvis project
 Personal Assistant for the AI &amp; Robotics Club
 # AI Intent-Based Browser Agent
 
