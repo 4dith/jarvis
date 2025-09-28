@@ -2,7 +2,7 @@ import discord
 from discord.ext import commands
 import asyncio
 
-TOKEN = "MTQxNTMxNDc4MDkyNjkwMjM1Mw.Gx5TMU.n0qctGpgJv8N71PqndEo6uzkd2UeAr4A-Lw-BM"
+TOKEN = "<YOUR_BOT_TOKEN>"
 bot = commands.Bot(command_prefix = '!',intents=discord.Intents.all())
 
 @bot.event
