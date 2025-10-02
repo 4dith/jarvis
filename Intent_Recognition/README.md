@@ -1,8 +1,6 @@
 # JARVIS - AI Chatbot Assistant
 
-## Created By :-
-
-R. Neti 
+## Created By :- R. Neti
 
 JARVIS is a **modular AI chatbot assistant** designed to understand user intents and extract relevant parameters from natural language queries. It uses **semantic embeddings** for intent recognition and **SpaCy + regex** for parameter extraction.
 
@@ -28,6 +26,35 @@ JARVIS is a **modular AI chatbot assistant** designed to understand user intents
   Easily add new intents and example phrases.
 
 ---
+# Intent Recognition Summary
+
+- **Goal**: Identify the user’s intention from a natural language query (e.g., play a song, tell a joke, get weather).
+
+- **Method**:
+
+- Predefine intents with example phrases in a dictionary (intents.py).
+
+- Use Sentence-BERT (all-MiniLM-L6-v2) to generate embeddings for each example phrase.
+
+- Precompute embeddings for all intents to speed up classification.
+
+- Classify new user input by computing cosine similarity between the input embedding and all intent example embeddings.
+
+- Select the intent with the highest similarity score. Optionally, ignore matches below a threshold.
+
+- **Advantages**:
+
+- Handles semantic similarity, not just exact keyword matching.
+
+- Can recognize variations in phrasing (e.g., “Play some music” ≈ “Put on a song”).
+
+- Easy to extend by adding new intents or examples.
+
+- Tools Used:
+
+- sentence-transformers for embeddings
+
+- cosine similarity (util.cos_sim) for comparing user input to intent examples
 
 # Project Structure
 ```
