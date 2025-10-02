@@ -1,0 +1,13 @@
+# Ignore macOS system files
+.DS_Store
+.Trash/
+.CFUserTextEncoding
+
+# Ignore virtual environments, caches, etc.
+.venv/
+__pycache__/
+node_modules/
+.env
+
+# Ignore global folders outside project
+../*
