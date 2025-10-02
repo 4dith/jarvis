@@ -5,31 +5,31 @@ Personal Assistant for the AI &amp; Robotics Club
 
 ![alt text](image.png)
 
-Define the JARVIS Framework
+1. Define the JARVIS Framework**
 
-Create a modular architecture:
+- **Create a modular architecture :**
 
-Intent Recognizer → routes user queries
+  - Intent Recognizer → routes user queries
 
-Skill Manager → dispatches to the right skill
+  - Skill Manager → dispatches to the right skill
 
-Response Generator → formats response for the interface (Discord/CLI/Web).
+  - Response Generator → formats response for the interface (Discord/CLI/Web).
 
-Use a message-passing pattern (like an internal API or event bus).
+- **Use a message-passing pattern (like an internal API or event bus)**
 
-Maintain a common API layer so all interfaces call the same backend.
+- **Maintain a common API layer so all interfaces call the same backend**
 
-Skill Manager
+2. Skill Manager
 
-Make a skill_registry where each skill registers with:
+- **Make a skill_registry where each skill registers with:**
 
-intent_name
+  - intent_name
 
-handler_function
+  - handler_function
 
-required_params
+  - required_params
 
-Example:
+- **Example:**
 ```
 {
   "faq": "faq_handler",
@@ -45,118 +45,118 @@ Start with simple implementations, then improve.
 
 1. FAQ Skill
 
-Store FAQs in a Vector DB (Pinecone, Weaviate, FAISS).
+  - **Store FAQs in a Vector DB (Pinecone, Weaviate, FAISS)**
 
-Pipeline:
+  - **Pipeline**:
 
-User query → embed → semantic search → return best answer.
+    - User query → embed → semantic search → return best answer.
 
-Tools: sentence-transformers, FAISS (local), or OpenAI Embeddings.
+  - **Tools:** sentence-transformers, FAISS (local), or OpenAI Embeddings.
 
 2. Event Schedule Skill
 
-Connect Google Calendar API / Notion API.
+  - **Connect Google Calendar API / Notion API**
 
-Features:
+  - **Features**:
 
-Fetch upcoming events.
+    - Fetch upcoming events.
 
-Answer queries like “What’s happening this weekend?”.
+    - Answer queries like “What’s happening this weekend?”.
 
-Use Google API client or Notion SDK.
+  - **Use Google API client or Notion SDK**
 
 3. Directory Skill
 
-Create a club database (JSON, SQL, or Airtable).
+  - Create a club database (JSON, SQL, or Airtable).
 
-Store members, roles, projects, contact info.
+  - Store members, roles, projects, contact info.
 
-Handler: query DB and return formatted info.
+  - Handler: query DB and return formatted info.
 
-Example: “Who is the Robotics Lead?” → “John Doe (john@club.com
-)”.
+  - Example: “Who is the Robotics Lead?” → “John Doe (john@club.com
+  )”.
 
 4. Device Control Skill
 
-Integrate with MQTT or ROS.
+  - Integrate with MQTT or ROS.
 
-Example flow:
+  - **Example flow:**
 
-Intent: “Move rover forward 10m.”
+    - Intent: “Move rover forward 10m.”
 
-Skill: Publish rover/move {forward: 10} to MQTT broker.
+    - Skill: Publish rover/move {forward: 10} to MQTT broker.
 
-Start with simple commands, later expand to multiple robotics devices.
+    - Start with simple commands, later expand to multiple robotics devices.
 
 5. General Knowledge Skill
 
-Use a Web Search API (SerpAPI, Bing Web Search, DuckDuckGo API).
+  - **Use a Web Search API (SerpAPI, Bing Web Search, DuckDuckGo API)**
 
-Steps:
+  - **Steps:**
 
-Fetch top results.
+    - Fetch top results.
 
-Summarize with LLM (or extract snippets).
+    - Summarize with LLM (or extract snippets).
 
-Return concise response.
+    - Return concise response.
 
 # 📍 Phase 3: Interfaces (One Brain, Many Interfaces)
 
-All interfaces → call central JARVIS backend.
+  - **All interfaces → call central JARVIS backend.**
 
-Website Chatbot (JARVIS 1)
+  - **Website Chatbot (JARVIS 1)**
 
-Frontend: React chatbot UI.
+    - Frontend: React chatbot UI.
 
-Backend: Flask/FastAPI/Node.js → routes to JARVIS core.
+    - Backend: Flask/FastAPI/Node.js → routes to JARVIS core.
 
-Discord Bot
+  - **Discord Bot**
 
-Use discord.js (Node.js) or discord.py.
+    - Use discord.js (Node.js) or discord.py.
 
-On message → send text to JARVIS backend → return response.
+    - On message → send text to JARVIS backend → return response.
 
-Android/PC App
+  - **Android/PC App**
 
-Android: Flutter/React Native → API calls to JARVIS backend.
+    - Android: Flutter/React Native → API calls to JARVIS backend.
 
-PC: Simple Electron app.
+    - PC: Simple Electron app**
 
-CLI
+  - **CLI**
 
 Python CLI → takes input → calls backend → prints response.
 
 # 📍 Phase 4: Orchestration & Enhancement
 
-Context Handling
+  - **Context Handling**
 
-Maintain short-term conversation memory.
+    - Maintain short-term conversation memory.
 
-Example:
+    - Example:
 
-User: “When is Robotics meeting?”
+    - User: “When is Robotics meeting?”
 
-JARVIS: “Friday at 6PM.”
+    - JARVIS: “Friday at 6PM.”
 
-User: “Where is it?” → use context → “Robotics Lab.”
+    - User: “Where is it?” → use context → “Robotics Lab.”
 
-Fallback System
+  - **Fallback System**
 
-If FAQ/Directory/Event/Device Control fail → fallback to General Knowledge Skill.
+    - If FAQ/Directory/Event/Device Control fail → fallback to General Knowledge Skill.
 
-Logging & Analytics
+  - **Logging & Analytics**
 
-Store all queries and intents.
+    - Store all queries and intents.
 
-Track “intent coverage” → helps improve FAQ and Directory.
+    - Track “intent coverage” → helps improve FAQ and Directory.
 
 # 📍 Phase 5: Advanced Features
 
-Add voice interface (speech-to-text + TTS).
+  - Add voice interface (speech-to-text + TTS).
 
-Add agentic workflows (JARVIS can perform multi-step tasks).
+  - Add agentic workflows (JARVIS can perform multi-step tasks).
 
-Add user authentication for private info (events, member details).
+  - Add user authentication for private info (events, member details).
 
 # AI Intent-Based Browser Agent
 
