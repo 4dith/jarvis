@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JARVIS Web Search</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            max-width: 900px; 
+            margin: 30px auto; 
+            padding: 0 20px; 
+            background: #f4f4f9; 
+        }
+        h1 { 
+            color: #333; 
+            text-align: center; 
+            margin-bottom: 25px; 
+        }
+        form { 
+            text-align: center; 
+            margin-bottom: 30px; 
+        }
+        input[type="text"] { 
+            width: 70%; 
+            padding: 12px; 
+            font-size: 16px; 
+            border: 1px solid #ccc; 
+            border-radius: 5px;
+        }
+        input[type="submit"] { 
+            padding: 12px 20px; 
+            font-size: 16px; 
+            cursor: pointer; 
+            border: none;
+            background: #1a73e8; 
+            color: #fff;
+            border-radius: 5px;
+            margin-left: 10px;
+        }
+        input[type="submit"]:hover {
+            background: #155ab6;
+        }
+        .answer { 
+            background: #fff; 
+            padding: 25px; 
+            border-radius: 8px; 
+            line-height: 1.6; 
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            white-space: pre-wrap; /* Preserve line breaks */
+        }
+        .answer ul { 
+            padding-left: 20px; 
+        }
+        .answer li { 
+            margin-bottom: 10px; 
+        }
+        .sources { 
+            margin-top: 25px; 
+            background: #fff; 
+            padding: 20px; 
+            border-radius: 8px; 
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .sources a { 
+            text-decoration: none; 
+            color: #1a73e8; 
+        }
+        .sources a:hover { 
+            text-decoration: underline; 
+        }
+    </style>
+</head>
+<body>
+    <h1>JARVIS Web Search</h1>
+    <form method="POST">
+        <input type="text" name="query" placeholder="Ask me something..." value="{{ query }}">
+        <input type="submit" value="Search">
+    </form>
+
+    {% if answer %}
+    <div class="answer">
+        <ul>
+            {% for line in answer.split('\n\n') %}
+                <li>{{ line | safe }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+
+    {% if sources %}
+    <div class="sources">
+        <h3>Sources:</h3>
+        <ul>
+            {% for s in sources %}
+            <li><a href="{{ s.link }}" target="_blank">{{ s.title }}</a></li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+</body>
+</html>

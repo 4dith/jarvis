@@ -1,0 +1,8 @@
+duckduckgo-search
+requests
+beautifulsoup4
+sentence-transformers
+transformers
+torch
+newspaper3k     # optional for better article extraction
+# playwright      # optional: for browser agent
