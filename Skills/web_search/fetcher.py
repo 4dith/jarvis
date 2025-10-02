@@ -1,7 +1,7 @@
 import requests
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup # type: ignore
 import logging
-from newspaper import Article
+from newspaper import Article # type: ignore
 
 def fetch_page_text(url, timeout=15):
     """Return the main text extracted from the URL (best effort)."""

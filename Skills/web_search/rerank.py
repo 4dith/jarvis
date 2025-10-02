@@ -1,4 +1,4 @@
-from sentence_transformers import SentenceTransformer, util
+from sentence_transformers import SentenceTransformer, util # type: ignore
 
 _model = None
 def _get_model():

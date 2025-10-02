@@ -1,4 +1,4 @@
-from ddgs import DDGS
+from ddgs import DDGS # type: ignore
 import logging
 
 def ddg_search(query, top_k=5):
