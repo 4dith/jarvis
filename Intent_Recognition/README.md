@@ -32,29 +32,29 @@ JARVIS is a **modular AI chatbot assistant** designed to understand user intents
 
 - **Method**:
 
-- Predefine intents with example phrases in a dictionary (intents.py).
+    - Predefine intents with example phrases in a dictionary (intents.py).
 
-- Use Sentence-BERT (all-MiniLM-L6-v2) to generate embeddings for each example phrase.
+    - Use Sentence-BERT (all-MiniLM-L6-v2) to generate embeddings for each example phrase.
 
-- Precompute embeddings for all intents to speed up classification.
+    - Precompute embeddings for all intents to speed up classification.
 
-- Classify new user input by computing cosine similarity between the input embedding and all intent example embeddings.
+    - Classify new user input by computing cosine similarity between the input embedding and all intent example embeddings.
 
-- Select the intent with the highest similarity score. Optionally, ignore matches below a threshold.
+    - Select the intent with the highest similarity score. Optionally, ignore matches below a threshold.
 
 - **Advantages**:
 
-- Handles semantic similarity, not just exact keyword matching.
+    - Handles semantic similarity, not just exact keyword matching.
 
-- Can recognize variations in phrasing (e.g., “Play some music” ≈ “Put on a song”).
+    - Can recognize variations in phrasing (e.g., “Play some music” ≈ “Put on a song”).
 
-- Easy to extend by adding new intents or examples.
+    - Easy to extend by adding new intents or examples.
 
-- Tools Used:
+    - Tools Used:
 
-- sentence-transformers for embeddings
+    - sentence-transformers for embeddings
 
-- cosine similarity (util.cos_sim) for comparing user input to intent examples
+    - cosine similarity (util.cos_sim) for comparing user input to intent examples
 
 # Project Structure
 ```
