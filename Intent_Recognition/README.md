@@ -1,5 +1,9 @@
 # JARVIS - AI Chatbot Assistant
 
+## Created By :-
+
+R. Neti 
+
 JARVIS is a **modular AI chatbot assistant** designed to understand user intents and extract relevant parameters from natural language queries. It uses **semantic embeddings** for intent recognition and **SpaCy + regex** for parameter extraction.
 
 ---
