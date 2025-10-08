@@ -29,12 +29,12 @@ def _cache_path(url):
 def fetch_page_text(url: str, timeout: int = TIMEOUT) -> str:
     """
     Fetch and clean webpage text with caching and fallbacks.
-    ⚡ Optimized for speed and reliability.
+    Optimized for speed and reliability.
     """
     headers = {"User-Agent": "Mozilla/5.0 (compatible; JARVIS/1.0)"}
     cache_file = _cache_path(url)
 
-    # ✅ Step 1: Serve from cache if exists
+    # Step 1: Serve from cache if exists
     if os.path.exists(cache_file):
         try:
             with open(cache_file, "r", encoding="utf-8") as f:
@@ -45,7 +45,7 @@ def fetch_page_text(url: str, timeout: int = TIMEOUT) -> str:
         except Exception:
             pass
 
-    # ✅ Step 2: Fast asynchronous request (httpx)
+    # Step 2: Fast asynchronous request (httpx)
     html = ""
     for attempt in range(MAX_RETRIES):
         try:
@@ -60,7 +60,7 @@ def fetch_page_text(url: str, timeout: int = TIMEOUT) -> str:
     else:
         return ""
 
-    # ✅ Step 3: Try Newspaper3k extraction (best quality)
+    # Step 3: Try Newspaper3k extraction (best quality)
     try:
         a = Article(url)
         a.download(input_html=html)
@@ -71,7 +71,7 @@ def fetch_page_text(url: str, timeout: int = TIMEOUT) -> str:
     except Exception:
         pass
 
-    # ✅ Step 4: Fast fallback with Selectolax (much faster than BeautifulSoup)
+    # Step 4: Fast fallback with Selectolax (much faster than BeautifulSoup)
     try:
         parser = HTMLParser(html)
         texts = []

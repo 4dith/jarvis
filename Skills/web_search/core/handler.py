@@ -20,12 +20,12 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(me
 # - Reduced I/O waits and reused threads
 # ------------------------------
 
-# ✅ Cache search results (avoid re-hitting DuckDuckGo)
+#  Cache search results (avoid re-hitting DuckDuckGo)
 @lru_cache(maxsize=32)
 def cached_search(query):
     return ddg_search(query, top_k=NUM_SEARCH_RESULTS)
 
-# ✅ Concurrently fetch pages with timeout and fewer workers for better CPU usage
+#  Concurrently fetch pages with timeout and fewer workers for better CPU usage
 def _fetch_pages(results, max_pages=MAX_PAGES, timeout=10, max_workers=MAX_WORKERS):
     pages = []
     with ThreadPoolExecutor(max_workers=max_workers) as executor:
@@ -44,7 +44,7 @@ def _fetch_pages(results, max_pages=MAX_PAGES, timeout=10, max_workers=MAX_WORKE
                 logging.warning("⚠️ Error fetching page: %s", e)
     return pages
 
-# ✅ Cache summaries to avoid recomputation
+#  Cache summaries to avoid recomputation
 @lru_cache(maxsize=64)
 def cached_summary(text):
     try:
@@ -53,7 +53,7 @@ def cached_summary(text):
         logging.warning(f"Summarization failed: {e}")
         return ""
 
-# ✅ Main handler (optimized)
+#  Main handler (optimized)
 def handler(query, top_k=3):
     """
     Efficient web search + summarization handler.
@@ -67,12 +67,12 @@ def handler(query, top_k=3):
     if not query or len(query.strip()) == 0:
         return {"answer": "Please enter a valid query.", "sources": [], "meta": {}}
 
-    # 1️⃣ Cached Search
+    # 1️ Cached Search
     results = cached_search(query)
     if not results:
         return {"answer": "No search results found.", "sources": [], "meta": {}}
 
-    # 2️⃣ Prepare snippets for reranking
+    # 2️ Prepare snippets for reranking
     snippets = [
         {
             "text": (r.get("snippet", "") + " " + r.get("title", "")),
@@ -82,13 +82,13 @@ def handler(query, top_k=3):
         for r in results
     ]
 
-    # 3️⃣ Lightweight Reranking (top_k only)
+    # 3️ Lightweight Reranking (top_k only)
     ranked = rerank_snippets(query, snippets, top_k=top_k)
 
-    # 4️⃣ Concurrent Fetch (with timeout)
+    # 4️ Concurrent Fetch (with timeout)
     pages = _fetch_pages(ranked, max_pages=top_k)
 
-    # 5️⃣ Fast Summarization (truncate + cache)
+    # 5️ Fast Summarization (truncate + cache)
     page_summaries = []
     for p in pages:
         text = (p.get("text", "") or "")[:3000]  # truncate long pages
@@ -107,7 +107,7 @@ def handler(query, top_k=3):
             formatted = f"• {summary} ([{p['title']}]({p['link']}))"
             page_summaries.append(formatted)
 
-    # 6️⃣ Final Formatting
+    # 6️ Final Formatting
     if not page_summaries:
         return {"answer": "No concise answer found.", "sources": [], "meta": {"results_count": len(results)}}
 

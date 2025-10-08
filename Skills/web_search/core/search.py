@@ -31,7 +31,7 @@ def ddg_search(query, top_k=NUM_SEARCH_RESULTS, retries=2, delay=1.5):
                     snippet = (r.get("body") or "").strip()
                     if title and link:
                         results.append({"title": title, "link": link, "snippet": snippet})
-            break  # ✅ Successful, exit retry loop
+            break  #  Successful, exit retry loop
         except Exception as e:
             logging.warning(f"[Attempt {attempt+1}] DuckDuckGo search failed: {e}")
             time.sleep(delay * (attempt + 1))  # exponential backoff
@@ -42,7 +42,7 @@ def ddg_search(query, top_k=NUM_SEARCH_RESULTS, retries=2, delay=1.5):
 
     # Log timing
     elapsed = round(time.time() - start_time, 2)
-    logging.info(f"🔍 Search for '{query}' → {len(results)} results in {elapsed}s")
+    logging.info(f"Search for '{query}' → {len(results)} results in {elapsed}s")
 
     # Fallback
     if not results:
@@ -57,7 +57,7 @@ def ddg_search_lite(query, top_k=NUM_SEARCH_RESULTS):
     Lightweight fallback that attempts smaller DDG searches
     concurrently for robustness.
     """
-    logging.info("⚡ Running lightweight fallback search...")
+    logging.info("Running lightweight fallback search...")
     subqueries = [query, f"{query} summary", f"{query} site:wikipedia.org"]
 
     results = []
