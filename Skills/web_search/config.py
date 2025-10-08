@@ -2,7 +2,7 @@
 # Central configuration for JARVIS
 
 # Summarization model
-SUMMARIZER_MODEL = "facebook/bart-large-cnn"
+SUMMARIZER_MODEL = "sshleifer/distilbart-cnn-12-6"
 
 # SentenceTransformer model for reranking
 RERANK_MODEL = "all-MiniLM-L6-v2"
