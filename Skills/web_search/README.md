@@ -8,87 +8,122 @@ It is built entirely using **open-source tools** and **free technologies**, suit
 
 ## 🚀 Features
 
-- **Text or Voice Input**: Ask queries via text or record your voice.
-- **Fast Web Search**: Fetches top relevant results from the web.
-- **Summarization**: Generates concise answers using Hugging Face Transformers.
-- **Source Links**: Shows the original URLs for transparency.
-- **Voice Output (Optional)**: Reads the summarized answer aloud.
-- **Open-Source & Free**: No paid APIs required.
+- **Text & Voice Input**: Ask queries via typing or speaking (optional).
+- **Fast Web Search**: Uses DuckDuckGo, Google, and Yahoo search engines.
+- **Content Fetching**: Retrieves page content using concurrent requests for speed.
+- **Summarization**: AI-powered summarization of web content for concise answers.
+- **Source Links**: Displays clickable links for all referenced sources.
+- **Voice Output**: Converts the answer into speech (optional).
 
 ---
 
 ## 🛠 Tech Stack
 
-- **Python 3.10+**
-- **Web Search**: `googlesearch-python` + `requests` + `BeautifulSoup`
-- **Summarization**: Hugging Face Transformers (`facebook/bart-large-cnn`)
-- **Voice Input**: OpenAI Whisper (`small` model)
-- **Voice Output**: pyttsx3 (offline TTS)
-- **GUI (Optional)**: Streamlit
+- **Backend**: Python, Flask
+- **Web Scraping**: Requests, BeautifulSoup4, Newspaper3k
+- **Search API**: DDGS (DuckDuckGo Search), Optional: Google Search API
+- **NLP & Summarization**: Hugging Face Transformers, Sentence-Transformers
+- **Concurrency**: `concurrent.futures.ThreadPoolExecutor`
+- **Frontend**: HTML, CSS (Responsive), Optional Voice Buttons
 
 ---
+
+## ⚡ Optimizations Implemented
+
+1. **Concurrent Page Fetching** → Faster retrieval of web content.
+2. **Token-based Summarization** → Accurate chunk-based summaries.
+3. **Batch Processing** → Faster inference on GPU/CPU.
+4. **Caching** → Summarizer, tokenizer, and page content cached.
+5. **Fallback Mechanisms** → Avoids crashes when summarization or fetching fails.
+6. **Mixed Precision** → Efficient GPU utilization (`fp16`) for summarization.
+7. **Minimal Search Results** → Limits top 3–5 results for speed.
+
+---
+
+## 📁 Project Structure
+
+```
+web_search/
+├─ app.py # Flask application entry point
+├─ requirements.txt # Python dependencies
+├─ templates/
+│ └─ index.html # Frontend HTML template
+├─ core/
+│ ├─ handler.py # Orchestrates search, fetch, rerank, summarize
+│ ├─ search.py # Web search implementation
+│ ├─ fetcher.py # Page fetching and parsing
+│ ├─ rerank.py # Snippet reranking (optional)
+│ └─ summarize.py # Optimized text summarization
+└─ config.py # Configuration (search limits, summarizer model, etc.)
+```
+----
 
 ## 📦 Installation
 
 1. Clone the repository:
 ```bash
 git clone https://github.com/your-username/jarvis-web-search.git
+python3 -m venv venv   #activate environment
+source venv/bin/activate   # macOS/Linux
+venv\Scripts\activate      # Windows
 cd jarvis-web-search
 pip install -r requirements.txt
+pip install accelerate sentencepiece  ## optional dependencies for faster summarization
+python app.py
 ```
+---
 
-2. requirements.txt
+## 🔧 Configuration
 ```
-transformers
-torch
-requests
-beautifulsoup4
-googlesearch-python
-pyttsx3
-openai-whisper
-streamlit  # optional
+NUM_SEARCH_RESULTS = 5        # Limit number of search results
+MAX_PAGES = 3                 # Max pages to fetch
+MAX_CHARS = 600               # Max characters per summary
+MAX_WORKERS = 5               # Thread pool size for fetching
+SUMMARIZER_MODEL = "sshleifer/distilbart-cnn-12-6"
 ```
+**Remarks** - Adjust these values to balance speed, accuracy, and performance.
+
+---
 
 ## Optimiztions
 
 ⚙️ Files to Modify for Speed Improvements
-🧩 1. core/handler.py
+1. 🧩 core/handler.py
 
-This is the main target — it handles web search and summarization.
+- This is the main target — it handles web search and summarization.
+- **Optimizations to apply here:**
 
-Optimizations to apply here:
+    - Use async I/O (aiohttp + asyncio) for concurrent fetching of web pages.
 
-Use async I/O (aiohttp + asyncio) for concurrent fetching of web pages.
+    - Cache results using functools.lru_cache or a lightweight cache (like SQLite or diskcache).
 
-Cache results using functools.lru_cache or a lightweight cache (like SQLite or diskcache).
+    - Use a lightweight summarizer (e.g., t5-small, bart-mini, or Gemma-2b-it via Ollama).
 
-Use a lightweight summarizer (e.g., t5-small, bart-mini, or Gemma-2b-it via Ollama).
+    - Limit the number of web pages fetched (e.g., top 3 search results).
 
-Limit the number of web pages fetched (e.g., top 3 search results).
+2. 🧠 core/search.py
 
-🧠 2. core/search.py
+- Handles fetching search results (Google, DuckDuckGo, or Serper API).
 
-Handles fetching search results (Google, DuckDuckGo, or Serper API).
+**Optimizations:**
 
-Optimizations:
+- Use DuckDuckGo’s HTML API instead of Google scraping → much faster and rate-limit friendly.
 
-Use DuckDuckGo’s HTML API instead of Google scraping → much faster and rate-limit friendly.
+- Fetch only the top 3–5 links.
 
-Fetch only the top 3–5 links.
+- Cache results locally (so repeated queries don’t hit the network).
 
-Cache results locally (so repeated queries don’t hit the network).
+3. 📝 core/summarizer.py
 
-📝 3. core/summarizer.py
+- Handles text summarization.
 
-Handles text summarization.
+**Optimizations:**
 
-Optimizations:
+- Replace large models (like t5-large or bart-large) with smaller ones (t5-small, distilbart-cnn, etc.).
 
-Replace large models (like t5-large or bart-large) with smaller ones (t5-small, distilbart-cnn, etc.).
+- Limit text input length before summarization (e.g., 1024 tokens).
 
-Limit text input length before summarization (e.g., 1024 tokens).
-
-Optionally, use extractive summarization (sumy, spacy, or transformers.pipeline("summarization")) instead of generative if time is critical.
+- Optionally, use extractive summarization (sumy, spacy, or transformers.pipeline("summarization")) instead of generative if time is critical.
 
 ## handler.py
 
@@ -131,4 +166,11 @@ Optionally, use extractive summarization (sumy, spacy, or transformers.pipeline(
 | **Smaller retry count**    | Prevents hanging on bad sites                            | More responsive             |
 | **Token limit truncation** | Prevents processing huge pages                           | Memory safe                 |
 | **Thread-safe caching**    | Works with `ThreadPoolExecutor` in `handler.py`          | Stable under concurrency    |
+
+## 📈 Future Improvements
+
+- Integrate more search engines for broader coverage.
+- Add multi-language support.
+- Improve voice input & output with offline models.
+- Enhance snippet reranking with embeddings for better relevance.
 
