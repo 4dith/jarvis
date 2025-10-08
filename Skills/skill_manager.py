@@ -1,4 +1,4 @@
-from Skills.web_search.handler import handler as web_handler
+from jarvis.Skills.web_search.core.core.handler import handler as web_handler
 
 skill_registry = {
     # ... other skills ...

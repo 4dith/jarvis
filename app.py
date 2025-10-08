@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request
-from Skills.web_search.handler import handler
+from jarvis.Skills.web_search.core.core.handler import handler
 import logging
 
 app = Flask(__name__)

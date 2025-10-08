@@ -1,8 +1,8 @@
-duckduckgo-search
+flask 
 requests
-beautifulsoup4
-sentence-transformers
-transformers
+beautifulsoup4 
+newspaper3k 
+ddgs 
+sentence-transformers 
+transformers 
 torch
-newspaper3k     # optional for better article extraction
-# playwright      # optional: for browser agent
