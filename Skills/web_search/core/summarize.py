@@ -1,75 +1,61 @@
-# core/summarize.py
 import logging
 from transformers import pipeline, AutoTokenizer
 from functools import lru_cache
-from config import SUMMARIZER_MODEL
+from config import SUMMARIZER_MODEL, MAX_SUMMARY_TOKENS
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 
 # ---------------------------------------------------
-# ⚡ OPTIMIZATIONS APPLIED
-# 1. Lazy loading & caching summarizer and tokenizer
-# 2. Token-based chunking (not naive character split)
-# 3. Dynamic summarization length (based on chunk size)
-# 4. Batched inference → faster GPU/CPU utilization
-# 5. Fallback to short snippet if summarization fails
-# 6. Mixed precision (fp16) if GPU available
+# ⚡ OPTIMIZATIONS:
+# 1. Lazy loading & caching of summarizer
+# 2. Handles single combined text for concise summary
+# 3. Truncates input text if too long for efficiency
+# 4. Fallback to short snippet if summarization fails
 # ---------------------------------------------------
 
 @lru_cache(maxsize=1)
 def _load_summarizer():
-    """Load summarization pipeline and tokenizer once."""
+    """Load summarization pipeline once."""
     logging.info(f"Loading summarizer model: {SUMMARIZER_MODEL}")
     summarizer = pipeline(
         "summarization",
         model=SUMMARIZER_MODEL,
         device_map="auto",
-        torch_dtype="auto",  # Uses fp16 on GPU automatically
+        torch_dtype="auto",  # uses fp16 on GPU if available
     )
     tokenizer = AutoTokenizer.from_pretrained(SUMMARIZER_MODEL)
     return summarizer, tokenizer
 
 
-def _chunk_text(text, tokenizer, max_tokens=800):
-    """Split text into token-based chunks for better accuracy."""
-    tokens = tokenizer.encode(text)
-    chunks = []
-    for i in range(0, len(tokens), max_tokens):
-        sub_tokens = tokens[i:i + max_tokens]
-        chunk = tokenizer.decode(sub_tokens, skip_special_tokens=True)
-        chunks.append(chunk)
-    return chunks
-
-
-def summarize(text, min_ratio=0.1, max_ratio=0.3):
+def summarize(text, max_input_chars=3000, max_summary_tokens=MAX_SUMMARY_TOKENS):
     """
-    Summarizes long text efficiently.
-    - Uses dynamic chunking
-    - Merges short outputs
+    Summarizes long text efficiently into a concise output.
+    Args:
+        text (str): Combined text from multiple sources
+        max_input_chars (int): Truncate input to avoid very long texts
+        max_summary_tokens (int): Maximum tokens for final summary
+    Returns:
+        str: Concise summary
     """
     summarizer, tokenizer = _load_summarizer()
 
-    # Handle edge case
     if not text or len(text.strip()) < 60:
         return text.strip()
 
-    chunks = _chunk_text(text, tokenizer)
-    summaries = []
+    # Truncate text to avoid model overload
+    text = text[:max_input_chars]
 
     try:
-        # Batch process for speed
-        results = summarizer(
-            chunks,
-            min_length=max(30, int(len(chunks[0].split()) * min_ratio)),
-            max_length=max(80, int(len(chunks[0].split()) * max_ratio)),
+        summary = summarizer(
+            text,
+            max_length=max_summary_tokens,
+            min_length=30,
             do_sample=False,
-            truncation=True,
-            batch_size=4,
-        )
-        summaries = [r["summary_text"].strip() for r in results]
+            truncation=True
+        )[0]["summary_text"].strip()
     except Exception as e:
         logging.warning(f"Summarization failed: {e}")
-        return text[:400] + "..."  # fallback snippet
+        # fallback: first 300 chars
+        return text[:300].rsplit('.', 1)[0] + "..."
 
-    summary_text = " ".join(summaries)
-    return summary_text.strip()
+    return summary

@@ -1,6 +1,4 @@
-# core/handler.py
 import logging
-import asyncio
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from functools import lru_cache
 from .search import ddg_search
@@ -12,20 +10,17 @@ from config import MAX_PAGES, MAX_CHARS, MAX_WORKERS, NUM_SEARCH_RESULTS
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 
 # ------------------------------
-# ⚡ Optimizations applied:
-# - Caching search results & summaries (lru_cache)
-# - Async + ThreadPool mix for concurrent fetch
-# - Truncate text early to avoid large summarization load
-# - Graceful degradation (fallbacks)
-# - Reduced I/O waits and reused threads
+# ⚡ Optimizations:
+# - Cached search & summaries
+# - Concurrent fetch with ThreadPool
+# - Truncate long texts for faster summarization
+# - Returns single short summary + multiple sources
 # ------------------------------
 
-#  Cache search results (avoid re-hitting DuckDuckGo)
 @lru_cache(maxsize=32)
 def cached_search(query):
     return ddg_search(query, top_k=NUM_SEARCH_RESULTS)
 
-#  Concurrently fetch pages with timeout and fewer workers for better CPU usage
 def _fetch_pages(results, max_pages=MAX_PAGES, timeout=10, max_workers=MAX_WORKERS):
     pages = []
     with ThreadPoolExecutor(max_workers=max_workers) as executor:
@@ -37,14 +32,12 @@ def _fetch_pages(results, max_pages=MAX_PAGES, timeout=10, max_workers=MAX_WORKE
                 pages.append({
                     "title": meta.get("title", ""),
                     "link": meta.get("link", ""),
-                    "snippet": meta.get("snippet", ""),
                     "text": text
                 })
             except Exception as e:
                 logging.warning("⚠️ Error fetching page: %s", e)
     return pages
 
-#  Cache summaries to avoid recomputation
 @lru_cache(maxsize=64)
 def cached_summary(text):
     try:
@@ -53,13 +46,11 @@ def cached_summary(text):
         logging.warning(f"Summarization failed: {e}")
         return ""
 
-#  Main handler (optimized)
 def handler(query, top_k=3):
     """
-    Efficient web search + summarization handler.
     Returns:
     {
-      "answer": "Readable formatted answer in bullets with links",
+      "answer": "Single concise summary",
       "sources": [{"title":..., "link":...}],
       "meta": {...}
     }
@@ -82,39 +73,29 @@ def handler(query, top_k=3):
         for r in results
     ]
 
-    # 3️ Lightweight Reranking (top_k only)
+    # 3️ Rerank snippets
     ranked = rerank_snippets(query, snippets, top_k=top_k)
 
-    # 4️ Concurrent Fetch (with timeout)
+    # 4️ Fetch full page text
     pages = _fetch_pages(ranked, max_pages=top_k)
 
-    # 5️ Fast Summarization (truncate + cache)
-    page_summaries = []
-    for p in pages:
-        text = (p.get("text", "") or "")[:3000]  # truncate long pages
-        snippet_text = p.get("snippet", "")
-        summary = ""
+    if not pages:
+        return {"answer": "No content could be fetched.", "sources": [], "meta": {"results_count": len(results)}}
 
-        if len(text) > 100:
-            summary = cached_summary(text)
-        elif snippet_text:
-            summary = snippet_text
+    # 5️ Combine all page texts for a single summary
+    combined_text = " ".join((p.get("text") or "")[:3000] for p in pages)
 
-        if len(summary) > MAX_CHARS:
-            summary = summary[:MAX_CHARS].rsplit('.', 1)[0] + "..."
+    if not combined_text.strip():
+        return {"answer": "No text content available to summarize.", "sources": [{"title": p["title"], "link": p["link"]} for p in pages], "meta": {"results_count": len(results)}}
 
-        if summary:
-            formatted = f"• {summary} ([{p['title']}]({p['link']}))"
-            page_summaries.append(formatted)
+    final_summary = cached_summary(combined_text)
 
-    # 6️ Final Formatting
-    if not page_summaries:
-        return {"answer": "No concise answer found.", "sources": [], "meta": {"results_count": len(results)}}
-
-    final_answer = "\n\n".join(page_summaries)
+    # Truncate summary if too long
+    if len(final_summary) > MAX_CHARS:
+        final_summary = final_summary[:MAX_CHARS].rsplit('.', 1)[0] + "..."
 
     return {
-        "answer": final_answer,
+        "answer": final_summary or "No concise summary could be generated.",
         "sources": [{"title": p["title"], "link": p["link"]} for p in pages],
         "meta": {"results_count": len(results)}
     }

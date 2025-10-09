@@ -117,7 +117,7 @@ def execute_actions(actions):
 async def play_spotify_song(song_name):
     """Play the first Spotify song result (with persistent login)."""
     if not song_name:
-        print("❌ No song specified.")
+        print("No song specified.")
         return
 
     print(f"🎵 Searching for '{song_name}' on Spotify...")
@@ -126,7 +126,7 @@ async def play_spotify_song(song_name):
         user_data_dir = os.path.join(os.getcwd(), "spotify_profile")
 
         async with async_playwright() as p:
-            # ✅ Launch persistent context (saves login session)
+            #  Launch persistent context (saves login session)
             browser = await p.chromium.launch_persistent_context(
                 user_data_dir=user_data_dir,
                 headless=False,
@@ -134,33 +134,33 @@ async def play_spotify_song(song_name):
             )
             page = await browser.new_page()
 
-            # ✅ Go to Spotify search page
+            # Go to Spotify search page
             await page.goto("https://open.spotify.com/search", timeout=60000)
 
-            # ✅ Detect if user not logged in
+            # Detect if user not logged in
             if "login" in page.url.lower():
-                print("🔐 Please log in to Spotify (only first time).")
+                print(" Please log in to Spotify (only first time).")
                 await page.wait_for_timeout(15000)  # 15 sec to log in manually
-                print("✅ Login session will be saved for next time.")
+                print(" Login session will be saved for next time.")
 
-            # ✅ Wait for search input
+            #  Wait for search input
             await page.wait_for_selector("input[data-testid='search-input']", timeout=30000)
             await page.fill("input[data-testid='search-input']", song_name)
             await asyncio.sleep(1)
             await page.keyboard.press("Enter")
             await asyncio.sleep(3)
 
-            # ✅ Click the first play button in "Songs" section
+            # Click the first play button in "Songs" section
             try:
                 await page.wait_for_selector("div[data-testid='tracklist-row'] button", timeout=10000)
                 buttons = await page.query_selector_all("div[data-testid='tracklist-row'] button")
                 if buttons:
                     await buttons[0].click()
-                    print(f"🎧 Now playing: {song_name}")
+                    print(f" Now playing: {song_name}")
                 else:
                     print("⚠️ Could not find song play button.")
             except Exception as e:
-                print("⚠️ Could not find song result:", e)
+                print(" Could not find song result:", e)
 
             await asyncio.sleep(60)  # let the song play for a minute
             await browser.close()
