@@ -1,7 +1,0 @@
-{
-    "intent": "search_product",
-    "entities": {
-      "product": "wireless mouse"
-    }
-  }
-  

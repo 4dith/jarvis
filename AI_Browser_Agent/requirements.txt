@@ -1,2 +1,5 @@
-playwright==1.38.0
-json5==0.9.14
+sounddevice
+numpy
+SpeechRecognition
+gTTS
+playwright
