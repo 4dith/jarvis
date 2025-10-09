@@ -18,14 +18,18 @@ def ask_bot(user_input, history):
         return None
 
 chat_history = []
+context = "AI and Robotics club has lke minded people who love working on ai and robotics stuff"
+
+chat_history.append({"role": "context", "content": context})
 
 print("HelpDesk Bot (type 'exit' to quit)")
+
 while True:
     user = input("You: ")
     if user.lower() == "exit":
         break
     reply = ask_bot(user, chat_history)
     if reply:
-        print("Bot:", reply)
+        print("\nBot:", reply + "\n")
         chat_history.append({"role": "user", "content": user})
         chat_history.append({"role": "assistant", "content": reply})
