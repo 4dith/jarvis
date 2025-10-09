@@ -2,13 +2,14 @@ import requests
 
 API_URL = "https://apifreellm.com/api/chat"
 
-def ask_bot(user_input, history):
-    context = "You are a helpful college club help desk assistant.\n"
-    for msg in history:
-        context += f"{msg['role']}: {msg['content']}\n"
-    context += f"User: {user_input}"
+with open("chatbot_module/context.txt", "r") as f:
+    context = f.read()
 
-    response = requests.post(API_URL, json={"message": context})
+def ask_bot(user_input):
+    global file_text
+    message = "You are a helpful college club help desk assistant.\nContext:\n" + context + "\nUser Question: " + user_input
+
+    response = requests.post(API_URL, json={"message": message})
     data = response.json()
 
     if data.get("status") == "success":
@@ -17,20 +18,12 @@ def ask_bot(user_input, history):
         print("Error:", data.get("error"))
         return None
 
-chat_history = []
-with open("chatbot_module/context.txt", "r") as f:
-    context = f.read()
-
-chat_history.append({"role": "context", "content": context})
-
 print("HelpDesk Bot (type 'exit' to quit)")
 
 while True:
     user = input("You: ")
     if user.lower() == "exit":
         break
-    reply = ask_bot(user, chat_history)
+    reply = ask_bot(user)
     if reply:
         print("\nBot:", reply + "\n")
-        chat_history.append({"role": "user", "content": user})
-        chat_history.append({"role": "assistant", "content": reply})
