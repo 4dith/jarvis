@@ -160,25 +160,6 @@ Python CLI → takes input → calls backend → prints response.
 
   - Add user authentication for private info (events, member details).
 
-# AI Intent-Based Browser Agent
-
-An end-to-end system that **automatically performs web tasks** based on **user intent classification**. The system combines **NLP-based intent classification** with an **AI-driven browser agent**, enabling hands-free automation of tasks like searching, clicking, filling forms, and extracting data.
-
----
-
-## Table of Contents
-- [Overview](#overview)
-- [Features](#features)
-- [Architecture](#architecture)
-- [Technologies Used](#technologies-used)
-- [Setup & Installation](#setup--installation)
-- [Usage](#usage)
-- [Example Workflow](#example-workflow)
-- [Contributing](#contributing)
-- [License](#license)
-
----
-
 ## Overview
 
 This project integrates two main components:
@@ -231,6 +212,7 @@ ai_browser_agent/
 ├─ sample_input.json    # Sample intent classifier output
 ├─ requirements.txt
 ```
+
 ## Setup & Installation
 
 1. **Clone the repository**
