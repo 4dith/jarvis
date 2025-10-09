@@ -18,7 +18,8 @@ def ask_bot(user_input, history):
         return None
 
 chat_history = []
-context = "AI and Robotics club has lke minded people who love working on ai and robotics stuff"
+with open("chatbot_module/context.txt", "r") as f:
+    context = f.read()
 
 chat_history.append({"role": "context", "content": context})
 
